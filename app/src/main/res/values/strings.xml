@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Book List</string>
+    <string name="no_internet_connection">No interNet connection!</string>
+    <string name="empty_view_text">No books found!</string>
+    <string name="view_text">VIEW</string>
+    <string name="book_title">book title</string>
+    <string name="search">SEARCH</string>
+</resources>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/main_screen_imageView_height"
+        android:scaleType="centerCrop"
+        android:src="@drawable/search_book" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/editLayout_height"
+        android:layout_marginTop="@dimen/layout_standard_padding"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/layout_standard_padding">
+
+        <EditText
+            android:id="@+id/enter_title"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:hint="@string/book_title" />
+
+        <TextView
+            android:id="@+id/search_button"
+            android:layout_width="@dimen/search_button_width"
+            android:layout_height="match_parent"
+            android:background="@color/colorAccent"
+            android:gravity="center"
+            android:text="@string/search"
+            android:textSize="@dimen/view_textSize" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/layout_standard_padding"
+        android:paddingRight="@dimen/layout_standard_padding">
+
+        <ListView
+
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:drawSelectorOnTop="true"
+            android:orientation="vertical" />
+
+        <TextView
+            android:id="@+id/empty_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textSize="@dimen/empty_view_textSize" />
+
+        <ProgressBar
+            android:id="@+id/in_loading"
+            style="@style/Widget.AppCompat.ProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+
+        <TextView
+            android:id="@+id/firstShowBackground"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white_300" />
+
+
+    </RelativeLayout>
+
+</LinearLayout>

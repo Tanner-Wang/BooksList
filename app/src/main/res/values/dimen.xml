@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="layout_standard_padding">16dp</dimen>
+    <dimen name="main_screen_imageView_height">120dp</dimen>
+    <dimen name="list_item_height">98dp</dimen>
+    <dimen name="simple_paddingAndMargin">2dp</dimen>
+    <dimen name="titleTextView_padding">16dp</dimen>
+    <dimen name="title_textSize">22dp</dimen>
+    <dimen name="sectionName_date_textSize">16sp</dimen>
+    <dimen name="view_width">58dp</dimen>
+    <dimen name="view_height">38dp</dimen>
+    <dimen name="view_textSize">18sp</dimen>
+    <dimen name="empty_view_textSize">26sp</dimen>
+    <dimen name="editLayout_height">46dp</dimen>
+    <dimen name="search_button_width">80dp</dimen>
+</resources>
