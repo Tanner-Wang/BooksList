@@ -101,6 +101,7 @@ public final class QueryUtils {
             return null;
         }
         List<Book> books = new ArrayList<Book>();
+        String author;
 
         try {
             JSONObject root = new JSONObject(jsonResponse);
@@ -109,10 +110,15 @@ public final class QueryUtils {
                 JSONObject book = resultsArray.getJSONObject(i);
                 JSONObject bookResult = book.getJSONObject("volumeInfo");
                 String title = bookResult.getString("title");
-                JSONArray authorArray = book.getJSONArray("authors");
-                String author = authorArray.getString(0);
-                for (int j = 1;j<authorArray.length();j++) {
-                    author += ", "+authorArray.getString(j);
+                if (book.has("authors")) {
+                    JSONArray authorArray = book.getJSONArray("authors");
+                    author = authorArray.getString(0);
+                    for (int j = 1; j < authorArray.length(); j++) {
+                        author += ", " + authorArray.getString(j);
+                    }
+                }
+                else{
+                    author = "Unknown";
                 }
                 String publishedDate = book.getString("publishedDate");
                 JSONObject accessInfo = book.getJSONObject("accessInfo");
