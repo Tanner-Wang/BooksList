@@ -101,17 +101,25 @@ public final class QueryUtils {
             return null;
         }
         List<Book> books = new ArrayList<Book>();
+        String title;
         String author;
-
+        String publishedDate;
+        String webReaderLink;
         try {
+
             JSONObject root = new JSONObject(jsonResponse);
             JSONArray resultsArray = root.getJSONArray("items");
             for (int i = 0; i < resultsArray.length(); i++){
                 JSONObject book = resultsArray.getJSONObject(i);
                 JSONObject bookResult = book.getJSONObject("volumeInfo");
-                String title = bookResult.getString("title");
-                if (book.has("authors")) {
-                    JSONArray authorArray = book.getJSONArray("authors");
+                if(bookResult.has("title")){
+                    title = bookResult.getString("title");
+                }
+                else{
+                    title = "Unknown";
+                }
+                if (bookResult.has("authors")) {
+                    JSONArray authorArray = bookResult.getJSONArray("authors");
                     author = authorArray.getString(0);
                     for (int j = 1; j < authorArray.length(); j++) {
                         author += ", " + authorArray.getString(j);
@@ -120,9 +128,19 @@ public final class QueryUtils {
                 else{
                     author = "Unknown";
                 }
-                String publishedDate = book.getString("publishedDate");
+                if(bookResult.has("publishedDate")){
+                    publishedDate = bookResult.getString("publishedDate");
+                }
+                else{
+                    publishedDate = "Unknown";
+                }
                 JSONObject accessInfo = book.getJSONObject("accessInfo");
-                String webReaderLink = accessInfo.getString("webReaderLink");
+                if(accessInfo.has("webReaderLink")){
+                    webReaderLink = accessInfo.getString("webReaderLink");
+                }
+                else{
+                    webReaderLink = null;
+                }
 
                 Book mBook = new Book(title,author,publishedDate,webReaderLink);
 
