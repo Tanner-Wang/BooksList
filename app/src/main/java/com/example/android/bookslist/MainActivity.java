@@ -15,21 +15,19 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Book>> {
 
+    private static final int BOOK_LOADER_ID = 0;
+    static ViewHolder holder = new ViewHolder();
     private static String BOOK_REQUEST_URL =
             "https://www.googleapis.com/books/v1/volumes?q=";
-
-
-    private static final int BOOK_LOADER_ID = 0;
-
     // Adapter for the list of books
     private BookAdapter mAdapter;
-
-    static ViewHolder holder = new ViewHolder();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +104,20 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         holder.firstShowBackground.setVisibility(View.GONE);
         holder.enterTitle = (EditText) findViewById(R.id.enter_title);
         String newBookTitle = holder.enterTitle.getText().toString().trim();
-        BOOK_REQUEST_URL += newBookTitle;
+
+        //定义变量，存储转义后的书名参数，因为输入的书名中有空格请求会因为URL不正确
+        //而发生错误，如the book,此处对其进行编码转义，用%20代替空格
+        String param = null;
+
+        try {
+            // 转码为 UTF-8
+            param = URLEncoder.encode(newBookTitle, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        BOOK_REQUEST_URL += param;
+
         // Get a reference to the LoaderManager, in order to interact with loaders.
         LoaderManager loaderManager = getLoaderManager();
 
@@ -115,15 +126,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // because this activity implements the LoaderCallbacks interface).
         loaderManager.initLoader(BOOK_LOADER_ID, null, this);
     }
-
-    static class ViewHolder {
-        ListView booksListView;
-        TextView mEmptyStateView;
-        EditText enterTitle;
-        TextView searchButton;
-        TextView firstShowBackground;
-    }
-
 
     @Override
     public Loader<List<Book>> onCreateLoader(int i, Bundle bundle) {
@@ -152,5 +154,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoaderReset(Loader<List<Book>> loader) {
         // Loader reset, so we can clear out our existing data.
         mAdapter.clear();
+    }
+
+    static class ViewHolder {
+        ListView booksListView;
+        TextView mEmptyStateView;
+        EditText enterTitle;
+        TextView searchButton;
+        TextView firstShowBackground;
     }
 }

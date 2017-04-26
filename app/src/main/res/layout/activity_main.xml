@@ -28,7 +28,7 @@
             android:id="@+id/search_button"
             android:layout_width="@dimen/search_button_width"
             android:layout_height="match_parent"
-            android:background="@color/colorAccent"
+            android:background="@drawable/click"
             android:gravity="center"
             android:layout_marginRight="@dimen/layout_standard_padding"
             android:text="@string/search"

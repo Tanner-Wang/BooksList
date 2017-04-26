@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">书籍列表</string>
+    <string name="book_title">名称</string>
+    <string name="empty_view_text">找不到这本书</string>
+    <string name="no_internet_connection">断网啦</string>
+    <string name="search">搜索</string>
+</resources>
