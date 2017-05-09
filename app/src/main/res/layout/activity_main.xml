@@ -28,10 +28,11 @@
             android:id="@+id/search_button"
             android:layout_width="@dimen/search_button_width"
             android:layout_height="match_parent"
+            android:layout_marginRight="@dimen/layout_standard_padding"
             android:background="@drawable/click"
             android:gravity="center"
-            android:layout_marginRight="@dimen/layout_standard_padding"
             android:text="@string/search"
+            android:textColor="@android:color/white"
             android:textSize="@dimen/view_textSize" />
 
     </LinearLayout>
@@ -69,7 +70,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/white_300" />
-
 
     </RelativeLayout>
 

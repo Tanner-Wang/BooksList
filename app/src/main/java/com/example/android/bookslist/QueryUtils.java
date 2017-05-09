@@ -1,5 +1,7 @@
 package com.example.android.bookslist;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 
 import org.json.JSONArray;
@@ -17,33 +19,32 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 public final class QueryUtils {
 
-    private QueryUtils(){
+    static final String NON_IMAGE_URL =
+            "https://b-ssl.duitang.com/uploads/item/201501/15/20150115230315_fVrU3.jpeg";
+
+    private QueryUtils() {
 
     }
 
-    public static List<Book> fetchNewsData(String requestUrl){
+    public static List<Book> fetchNewsData(String requestUrl) {
         URL url = createUrl(requestUrl);
 
         String jsonResponse = "";
-        try{
+        try {
             jsonResponse = makeHttpRequest(url);
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        List<Book> books = extractFeatureFromJson(jsonResponse);
+        List<Book> currentBooks = extractFeatureFromJson(jsonResponse);
 
-        return books;
+        return currentBooks;
     }
-
 
     private static URL createUrl(String url) {
         URL mUrl = null;
-        try{
+        try {
             mUrl = new URL(url);
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -53,13 +54,13 @@ public final class QueryUtils {
 
     private static String makeHttpRequest(URL url) throws IOException {
         String jsonResponse = "";
-        if (url == null){
+        if (url == null) {
             return jsonResponse;
         }
         HttpURLConnection urlConnection = null;
         InputStream inputStream = null;
 
-        try{
+        try {
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setReadTimeout(10000);
             urlConnection.setConnectTimeout(15000);
@@ -70,11 +71,12 @@ public final class QueryUtils {
 
         } catch (IOException e) {
             e.printStackTrace();
-        }finally{
-            if (urlConnection!=null){
+        } finally {
+            if (urlConnection != null) {
                 urlConnection.disconnect();
 
-            }if (inputStream!=null){
+            }
+            if (inputStream != null) {
                 inputStream.close();
             }
 
@@ -84,11 +86,11 @@ public final class QueryUtils {
 
     private static String readFromStream(InputStream inputStream) throws IOException {
         StringBuilder output = new StringBuilder();
-        if (inputStream!=null){
+        if (inputStream != null) {
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
             BufferedReader reader = new BufferedReader(inputStreamReader);
             String line = reader.readLine();
-            while(line!=null){
+            while (line != null) {
                 output.append(line);
                 line = reader.readLine();
             }
@@ -97,10 +99,12 @@ public final class QueryUtils {
     }
 
     private static List<Book> extractFeatureFromJson(String jsonResponse) {
-        if (TextUtils.isEmpty(jsonResponse)){
+        if (TextUtils.isEmpty(jsonResponse)) {
             return null;
         }
         List<Book> books = new ArrayList<Book>();
+        String currentImageUrl;
+        Bitmap bookImage;
         String title;
         String author;
         String publishedDate;
@@ -109,13 +113,16 @@ public final class QueryUtils {
 
             JSONObject root = new JSONObject(jsonResponse);
             JSONArray resultsArray = root.getJSONArray("items");
-            for (int i = 0; i < resultsArray.length(); i++){
+            for (int i = 0; i < resultsArray.length(); i++) {
                 JSONObject book = resultsArray.getJSONObject(i);
                 JSONObject bookResult = book.getJSONObject("volumeInfo");
-                if(bookResult.has("title")){
+
+                if (bookResult.has("title")) {
                     title = bookResult.getString("title");
-                }
-                else{
+                    if (title.trim().equals("")) {
+                        title = "Unknown";
+                    }
+                } else {
                     title = "Unknown";
                 }
                 if (bookResult.has("authors")) {
@@ -124,25 +131,39 @@ public final class QueryUtils {
                     for (int j = 1; j < authorArray.length(); j++) {
                         author += ", " + authorArray.getString(j);
                     }
-                }
-                else{
+                    if (author.trim().equals("")) {
+                        author = "Unknown";
+                    }
+                } else {
                     author = "Unknown";
                 }
-                if(bookResult.has("publishedDate")){
+                if (bookResult.has("publishedDate")) {
                     publishedDate = bookResult.getString("publishedDate");
-                }
-                else{
+                    if (publishedDate.trim().equals("")) {
+                        publishedDate = "Unknown";
+                    }
+                } else {
                     publishedDate = "Unknown";
                 }
                 JSONObject accessInfo = book.getJSONObject("accessInfo");
-                if(accessInfo.has("webReaderLink")){
+                if (accessInfo.has("webReaderLink")) {
                     webReaderLink = accessInfo.getString("webReaderLink");
-                }
-                else{
+                } else {
                     webReaderLink = null;
                 }
+                if (bookResult.has("imageLinks")) {
+                    JSONObject imageUrl = bookResult.getJSONObject("imageLinks");
+                    if (imageUrl.has("thumbnail")) {
+                        currentImageUrl = imageUrl.getString("thumbnail");
+                    } else {
+                        currentImageUrl = NON_IMAGE_URL;
+                    }
+                } else {
+                    currentImageUrl = NON_IMAGE_URL;
+                }
+                bookImage = returnBitMap(currentImageUrl);
 
-                Book mBook = new Book(title,author,publishedDate,webReaderLink);
+                Book mBook = new Book(bookImage, title, author, publishedDate, webReaderLink);
 
                 books.add(mBook);
             }
@@ -151,6 +172,27 @@ public final class QueryUtils {
         }
 
         return books;
+    }
+
+    private static Bitmap returnBitMap(String url) {
+        URL myFileUrl = null;
+        Bitmap bitmap = null;
+        try {
+            myFileUrl = new URL(url);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        try {
+            HttpURLConnection conn = (HttpURLConnection) myFileUrl.openConnection();
+            conn.setDoInput(true);
+            conn.connect();
+            InputStream is = conn.getInputStream();
+            bitmap = BitmapFactory.decodeStream(is);
+            is.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
     }
 
 

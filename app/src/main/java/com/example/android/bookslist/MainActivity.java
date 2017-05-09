@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -23,8 +24,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Book>> {
 
     private static final int BOOK_LOADER_ID = 0;
-    static ViewHolder holder = new ViewHolder();
-    private static String BOOK_REQUEST_URL =
+    ViewHolder holder = new ViewHolder();
+    private String BOOK_REQUEST_URL =
             "https://www.googleapis.com/books/v1/volumes?q=";
     // Adapter for the list of books
     private BookAdapter mAdapter;
@@ -39,7 +40,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         holder.mEmptyStateView = (TextView) findViewById(R.id.empty_view);
         holder.booksListView.setEmptyView(holder.mEmptyStateView);
-
 
         // Create a new adapter that takes an empty list of books as input
         mAdapter = new BookAdapter(this, new ArrayList<Book>());
@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                 // Convert the String URL into a URI object (to pass into the Intent constructor)
                 Uri newsUri = Uri.parse(currentBook.getmUrl());
-
                 // Create a new intent to view the book URI
                 Intent websiteIntent = new Intent(Intent.ACTION_VIEW, newsUri);
 
@@ -66,9 +65,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 startActivity(websiteIntent);
             }
         });
-
-
         holder.firstShowBackground = (TextView) findViewById(R.id.firstShowBackground);
+        holder.mLoading = findViewById(R.id.in_loading);
 
         ConnectivityManager cm =
                 (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -87,11 +85,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             });
         } else {
             holder.firstShowBackground.setVisibility(View.GONE);
-            View mLoading = findViewById(R.id.in_loading);
-            mLoading.setVisibility(View.GONE);
+            holder.mLoading.setVisibility(View.GONE);
             holder.mEmptyStateView.setText(R.string.no_internet_connection);
         }
-
 
     }
 
@@ -101,9 +97,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void updateUi() {
-        holder.firstShowBackground.setVisibility(View.GONE);
+
         holder.enterTitle = (EditText) findViewById(R.id.enter_title);
         String newBookTitle = holder.enterTitle.getText().toString().trim();
+        if (newBookTitle.equals("")) {
+            Toast.makeText(this, R.string.enter_incorrect, Toast.LENGTH_SHORT).show();
+            holder.enterTitle.setText("");
+            return;
+        }
+        holder.firstShowBackground.setVisibility(View.GONE);
+
 
         //定义变量，存储转义后的书名参数，因为输入的书名中有空格请求会因为URL不正确
         //而发生错误，如the book,此处对其进行编码转义，用%20代替空格
@@ -118,6 +121,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         BOOK_REQUEST_URL += param;
 
+        if (getLoaderManager().getLoader(0) != null) {
+            getLoaderManager().restartLoader(0, null, this);
+        }
         // Get a reference to the LoaderManager, in order to interact with loaders.
         LoaderManager loaderManager = getLoaderManager();
 
@@ -125,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
         // because this activity implements the LoaderCallbacks interface).
         loaderManager.initLoader(BOOK_LOADER_ID, null, this);
+        holder.mLoading.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -162,5 +169,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         EditText enterTitle;
         TextView searchButton;
         TextView firstShowBackground;
+        View mLoading;
     }
+
+
 }

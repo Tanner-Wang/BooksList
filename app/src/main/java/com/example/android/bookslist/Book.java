@@ -1,8 +1,11 @@
 package com.example.android.bookslist;
 
 
+import android.graphics.Bitmap;
 
 public class Book {
+
+    private Bitmap mImage;
 
     private String mTitle;
 
@@ -12,27 +15,32 @@ public class Book {
 
     private String mUrl;
 
-    public Book(String title, String author, String publishedDate, String url){
+    public Book(Bitmap image, String title, String author, String publishedDate, String url) {
 
+        mImage = image;
         mTitle = title;
         mAuthor = author;
         mPublishedDate = publishedDate;
         mUrl = url;
     }
 
-    public String getmTitle(){
+    public Bitmap getmImage() {
+        return mImage;
+    }
+
+    public String getmTitle() {
         return mTitle;
     }
 
-    public String getmAuthor(){
+    public String getmAuthor() {
         return mAuthor;
     }
 
-    public String getmPublishedDate(){
+    public String getmPublishedDate() {
         return mPublishedDate;
     }
 
-    public String getmUrl(){
+    public String getmUrl() {
         return mUrl;
     }
 }

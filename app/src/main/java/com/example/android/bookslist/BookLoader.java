@@ -5,14 +5,9 @@ import android.content.Context;
 
 import java.util.List;
 
-
-
 public class BookLoader extends AsyncTaskLoader<List<Book>> {
 
-
-
     private String mUrl;
-
 
     public BookLoader(Context context, String url) {
         super(context);
@@ -20,13 +15,13 @@ public class BookLoader extends AsyncTaskLoader<List<Book>> {
     }
 
     @Override
-    protected void onStartLoading(){
+    protected void onStartLoading() {
         forceLoad();
     }
 
     @Override
     public List<Book> loadInBackground() {
-        if (mUrl==null) {
+        if (mUrl == null) {
             return null;
         }
         return QueryUtils.fetchNewsData(mUrl);
